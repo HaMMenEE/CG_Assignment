@@ -44,7 +44,9 @@ save_hist(clahe, 'hist_clahe.png')
 def mse(imageA, imageB):
     return np.mean((imageA - imageB) ** 2)
 
-mse_value = mse(gray, he)
+mse_value_he = mse(gray, he)
+mse_value_ahe = mse(gray, ahe)
+mse_value_clahe = mse(gray, classhe)
 
 # PSNR
 def psnr(imageA, imageB):
@@ -53,11 +55,21 @@ def psnr(imageA, imageB):
         return float('inf')
     return 10 * np.log10((255 ** 2) / mse_val)
 
-psnr_value = psnr(gray, he)
+psnr_value_he = psnr(gray, he)
+psnr_value_ahe = psnr(gray, ahe)
+psnr_value_clahe = psnr(gray, clahe)
 
 # SSIM 
-ssim_value = ssim(gray, he)
+ssim_value_he = ssim(gray, he)
+ssim_value_ahe = ssim(gray, ahe)
+ssim_value_clahe = ssim(gray, clahe)
 
-print("MSE :", mse_value)
-print("PSNR:", psnr_value)
-print("SSIM:", ssim_value)
+print("MSE(he):", mse_value_he)
+print("PSNR(he):", psnr_value_he)
+print("SSIM(he):", ssim_value_he)
+print("MSE(ahe):", mse_value_ahe)
+print("PSNR(ahe):", psnr_value_ahe)
+print("SSIM(ahe):", ssim_value_ahe)
+print("MSE(clahe):", mse_value_clahe)
+print("PSNR(clahe):", psnr_value_clahe)
+print("SSIM(clahe):", ssim_value_clahe)
