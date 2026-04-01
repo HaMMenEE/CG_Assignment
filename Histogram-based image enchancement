@@ -1,0 +1,63 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage import exposure
+from skimage.filters import threshold_minimum
+from skimage.metrics import structural_similarity as ssim
+
+img = cv2.imread('input.jpg')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+cv2.imwrite('gray.jpg', gray)
+
+def save_hist(image, filename):
+    plt.figure()
+    plt.hist(image.ravel(), bins=256, range=(0,256))
+    plt.title(filename)
+    plt.savefig(filename)
+    plt.close()
+
+# grayscale histogram
+save_hist(gray, 'hist_gray.png')
+
+# HE histogram
+he = cv2.equalizeHist(gray)
+cv2.imwrite('he.jpg', he)
+save_hist(he, 'hist_he.png')
+
+# AHE histogram
+ahe = exposure.equalize_adapthist(gray, clip_limit=1.0)
+ahe = (ahe * 255).astype(np.uint8)
+
+cv2.imwrite('ahe.jpg', ahe)
+save_hist(ahe, 'hist_ahe.png')
+
+# CLAHE histogram
+clahe_obj = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+clahe = clahe_obj.apply(gray)
+
+cv2.imwrite('clahe.jpg', clahe)
+save_hist(clahe, 'hist_clahe.png')
+
+
+# MSE
+def mse(imageA, imageB):
+    return np.mean((imageA - imageB) ** 2)
+
+mse_value = mse(gray, he)
+
+# PSNR
+def psnr(imageA, imageB):
+    mse_val = mse(imageA, imageB)
+    if mse_val == 0:
+        return float('inf')
+    return 10 * np.log10((255 ** 2) / mse_val)
+
+psnr_value = psnr(gray, he)
+
+# SSIM 
+ssim_value = ssim(gray, he)
+
+print("MSE :", mse_value)
+print("PSNR:", psnr_value)
+print("SSIM:", ssim_value)
